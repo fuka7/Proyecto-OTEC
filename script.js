@@ -10,7 +10,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     e.preventDefault();
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
-      const offsetTop = target.offsetTop - 80;
+      // Calculate offset dynamically based on navbar height so the section isn't hidden
+      const navbar = document.getElementById('navbar');
+      const navHeight = navbar ? navbar.offsetHeight : 80;
+      const extraGap = 12; // extra spacing so content isn't flush to the navbar
+      const offsetTop = target.getBoundingClientRect().top + window.pageYOffset - navHeight - extraGap;
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth'
@@ -322,3 +326,85 @@ function animateCounters() {
   items.forEach(i => obs.observe(i));
 }
 animateCounters();
+
+// === SIMPLE CAROUSEL FOR TEAM SECTION ===
+function initTeamCarousels() {
+  document.querySelectorAll('.team-carousel').forEach(carousel => {
+    const track = carousel.querySelector('.team-track');
+    const cards = Array.from(track.querySelectorAll('.team-card'));
+    const prev = carousel.querySelector('.carousel-prev');
+    const next = carousel.querySelector('.carousel-next');
+    const dotsContainer = carousel.querySelector('.carousel-dots');
+
+    if (!track || cards.length === 0) return;
+
+    // create dots
+    cards.forEach((card, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = i === 0 ? 'active' : '';
+      btn.setAttribute('aria-label', `Ir al miembro ${i+1}`);
+      btn.addEventListener('click', () => scrollToIndex(i));
+      dotsContainer.appendChild(btn);
+    });
+
+    let current = 0;
+
+    function updateDots() {
+      Array.from(dotsContainer.children).forEach((d, idx) => d.classList.toggle('active', idx === current));
+    }
+
+    function scrollToIndex(i) {
+      const card = cards[i];
+      if (!card) return;
+      const left = card.offsetLeft - track.offsetLeft;
+      track.scrollTo({ left, behavior: 'smooth' });
+      current = i;
+      updateDots();
+    }
+
+    prev?.addEventListener('click', () => {
+      current = Math.max(0, current - 1);
+      scrollToIndex(current);
+    });
+
+    next?.addEventListener('click', () => {
+      current = Math.min(cards.length - 1, current + 1);
+      scrollToIndex(current);
+    });
+
+    // Update current based on scroll position (useful for user swipe)
+    let scrollTimeout;
+    track.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // find nearest card
+        const left = track.scrollLeft;
+        let nearest = 0; let minDiff = Infinity;
+        cards.forEach((c, idx) => {
+          const diff = Math.abs(c.offsetLeft - track.offsetLeft - left);
+          if (diff < minDiff) { minDiff = diff; nearest = idx; }
+        });
+        current = nearest; updateDots();
+      }, 100);
+    });
+
+    // Optional autoplay
+    let autoplay = true;
+    let autoplayTimer;
+    function startAutoplay() {
+      if (!autoplay) return;
+      autoplayTimer = setInterval(() => {
+        current = (current + 1) % cards.length;
+        scrollToIndex(current);
+      }, 4000);
+    }
+    function stopAutoplay() { clearInterval(autoplayTimer); }
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    startAutoplay();
+  });
+}
+
+// initialize carousels after DOM ready
+document.addEventListener('DOMContentLoaded', initTeamCarousels);

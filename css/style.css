@@ -1,12 +1,3 @@
-/* ========================================
-   FEL GROUP - MODERN & INNOVATIVE DESIGN 2025
-   Glassmorphism + Microinteractions + Bold Typography
-   ======================================== */
-
-/* Variables moved to css/variables.css */
-
-/* Reset and base typography moved to css/base.css */
-
 /* === NAVBAR === */
 .navbar {
   position: fixed;
@@ -334,7 +325,8 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 100px;
+  padding-top: 80px; /* reduced space from fixed navbar */
+  padding-bottom: 60px; /* breathing room below hero */
   overflow: hidden;
 }
 
@@ -367,9 +359,9 @@
 
 /* Constrain and center hero content for better layout balance */
 .hero .hero-content {
-  max-width: 720px;
+  max-width: 820px; /* allow more room for big headline */
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 3rem 1.25rem; /* more internal spacing */
 }
 
 .hero {
@@ -413,19 +405,19 @@
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(2.25rem, 6vw, 5rem);
   font-weight: 900;
-  line-height: 1.05;
-  margin-bottom: var(--space-md);
+  line-height: 1.02; /* keep very tight but avoid overlap */
+  margin-bottom: calc(var(--space-lg)); /* bigger gap under headline */
   animation: fadeInUp 0.8s ease 0.2s both;
 }
 
 .hero-description {
   font-size: clamp(1.125rem, 2vw, 1.375rem);
   color: var(--text-secondary);
-  max-width: 650px;
-  line-height: 1.7;
-  margin-bottom: var(--space-md);
+  max-width: 720px;
+  line-height: 1.8; /* slightly more breathing room for paragraphs */
+  margin-bottom: var(--space-lg);
   animation: fadeInUp 0.8s ease 0.4s both;
 }
 
@@ -462,7 +454,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: var(--space-lg);
+  margin-bottom: calc(var(--space-xl)); /* more space before stats */
   animation: fadeInUp 0.8s ease 0.8s both;
 }
 
@@ -499,6 +491,26 @@
 .hero-stats-container {
   display: grid;
   gap: 1.5rem;
+}
+
+/* Ensure the inline hero-stats in HTML align nicely */
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-end;
+  margin-top: 0.5rem;
+}
+
+.hero-stats .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.hero-stats .stat-number {
+  font-size: 2rem;
+  font-weight: 800;
 }
 
 .stat-card {
@@ -863,8 +875,70 @@
 /* === TEAM === */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* Carousel styles for team section */
+.team-carousel {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+}
+
+.team-track {
+  display: flex;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+/* hide native scrollbar but keep scroll functionality */
+.team-track::-webkit-scrollbar { height: 10px; display: none; }
+.team-track { scrollbar-width: none; -ms-overflow-style: none; }
+
+.team-track .team-card {
+  min-width: 260px;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--yellow-primary); /* yellow buttons */
+  color: var(--black);
+  border: 1px solid var(--yellow-primary);
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
+
+.carousel-prev { left: -22px; }
+.carousel-next { right: -22px; }
+
+.carousel-dots {
+  display: none; /* hide dots as requested */
+}
+
+/* Hide carousel arrow buttons if user prefers no arrows */
+.carousel-btn { display: none !important; }
+
+/* Responsive: show grid on larger screens */
+@media (min-width: 920px) {
+  /* Keep carousel behavior on large screens but show multiple cards visibly */
+  .team-track { overflow-x: auto; display: flex; gap: var(--space-lg); }
+  .team-track .team-card { min-width: 22%; flex: 0 0 auto; }
+  .carousel-btn { display: flex; }
+  .carousel-dots { display: flex; }
 }
 
 .team-card {
@@ -1846,6 +1920,90 @@ textarea.form-control {
 }
 .services-section      { padding: var(--space-2xl) 0; }
 .methodology-section   { padding: var(--space-2xl) 0; background: var(--gray-100); }
+.methodology-section .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+.methodology-section .section-header.center { text-align: center; margin-bottom: var(--space-lg); }
+
+
+.methodology-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 920px;
+  margin: 0 auto;
+  padding-top: var(--space-md);
+}
+
+/* Two-column layout for each step: left = icon + title, right = description */
+.flow-item {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr; /* wider left column for prominent titles */
+  gap: 1.25rem;
+  align-items: start;
+  transition: opacity 0.6s ease, transform 0.6s ease; /* smooth reveal */
+}
+
+.flow-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end; /* keep icon+title flush to the right of the left column */
+  padding-right: 0.5rem;
+}
+
+.flow-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--yellow-light);
+  color: var(--black);
+  font-size: 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.flow-left h3 {
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  margin: 0;
+  font-weight: 900; /* extra bold to match the reference image */
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  text-align: right;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.flow-right p {
+  margin: 0;
+  color: var(--text-secondary);
+  max-width: 60ch; /* keep paragraph lines readable */
+}
+
+/* Connector (subtle vertical line) placed under the left column (icon area) */
+.flow-connector {
+  grid-column: 1;
+  width: 2px;
+  height: 32px;
+  background: var(--gray-300);
+  margin-left: 24px; /* centers under the 48px icon */
+  margin-top: 6px;
+  border-radius: 2px;
+}
+
+@media (max-width: 720px) {
+  .flow-item { display: flex; flex-direction: column; }
+  .flow-left { align-items: flex-start; justify-content: flex-start; text-align: left; }
+  .flow-left h3 { text-align: left; }
+  .flow-connector { display: none; }
+}
+
+@media (min-width: 900px) {
+  .methodology-flow { gap: calc(var(--space-lg) * 1.6); }
+  .flow-connector { height: 48px; }
+}
+
 .team-section          { padding: var(--space-2xl) 0; position: relative; }
 .contact-section       { padding: var(--space-2xl) 0; background: var(--gray-100); }
 .cta-section           { padding: var(--space-2xl) 0; background: var(--yellow-primary); text-align:center; }
@@ -1854,9 +2012,9 @@ textarea.form-control {
 .hero-text { 
   font-size: clamp(1.125rem, 2vw, 1.375rem);
   color: var(--text-secondary);
-  max-width: 650px;
-  line-height: 1.7;
-  margin-bottom: var(--space-md);
+  max-width: 720px;
+  line-height: 1.8;
+  margin-bottom: var(--space-lg);
 }
 
 /* ====== Diferenciadores (no tenían estilos) ====== */

@@ -2,32 +2,7 @@
 // FEL GROUP - INTERACTIVE JAVASCRIPT
 // ========================================
 
-// === NAV BAR SCROLL ===
-const navbar = document.getElementById('navbar');
-const navToggle = document.getElementById('navToggle');
-const navMenu = document.getElementById('navMenu');
-
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-});
-
-// === MOBILE MENU TOGGLE ===
-navToggle.addEventListener('click', () => {
-  navMenu.classList.toggle('active');
-  navToggle.classList.toggle('active');
-});
-
-// Close menu when clicking nav links
-document.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    navMenu.classList.remove('active');
-    navToggle.classList.remove('active');
-  });
-});
+// Navbar and mobile menu are initialized further down (consolidated implementation).
 
 // === SMOOTH SCROLL ===
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -286,3 +261,64 @@ console.log('%cContacto: contacto@felgroup.cl', 'font-size: 12px; color: #999;')
 
 // === INITIALIZATION ===
 console.log('✓ FEL Group website initialized');
+
+// ===== Menú móvil / tablet =====
+const navToggle   = document.getElementById('navToggle');
+const navMenu     = document.getElementById('navMenu');
+const mobileMenu  = document.getElementById('mobileMenu');
+
+function toggleMenu(open) {
+  const willOpen = typeof open === 'boolean' ? open : !mobileMenu.classList.contains('active');
+  mobileMenu.classList.toggle('active', willOpen);
+  navMenu.classList.toggle('active', willOpen);       // útil en tablet
+  navToggle.classList.toggle('active', willOpen);
+  navToggle.setAttribute('aria-expanded', String(willOpen));
+  mobileMenu.setAttribute('aria-hidden', String(!willOpen));
+}
+
+// Abrir/cerrar con el botón
+navToggle?.addEventListener('click', () => toggleMenu());
+
+// Cerrar cuando hago click en un enlace
+mobileMenu?.addEventListener('click', (e) => {
+  if (e.target.closest('a.nav-link')) toggleMenu(false);
+});
+
+// ===== Navbar “scrolled” =====
+const navbar = document.getElementById('navbar');
+function onScroll() {
+  if (!navbar) return;
+  const scrolled = window.scrollY > 10;
+  navbar.classList.toggle('scrolled', scrolled);
+}
+onScroll();
+window.addEventListener('scroll', onScroll);
+
+// ===== Contadores del hero =====
+function animateCounters() {
+  const items = document.querySelectorAll('.hero .stat-item');
+  const options = { threshold: 0.4 };
+  const obs = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.getAttribute('data-count') || '0', 10);
+      const num = el.querySelector('.stat-number');
+      if (!num) return;
+
+      let start = 0;
+      const step = Math.max(1, Math.floor(target / 80)); // ~80 frames
+      const tick = () => {
+        start += step;
+        if (start >= target) { start = target; }
+        num.textContent = start.toLocaleString('es-CL');
+        if (start < target) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      observer.unobserve(el);
+    });
+  }, options);
+
+  items.forEach(i => obs.observe(i));
+}
+animateCounters();

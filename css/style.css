@@ -2017,36 +2017,6 @@ textarea.form-control {
   margin-bottom: var(--space-lg);
 }
 
-/* ====== Diferenciadores (no tenían estilos) ====== */
-.differentiators { padding: var(--space-2xl) 0; background: var(--white); }
-.diff-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-md);
-}
-.diff-card {
-  border-radius: 16px;
-  padding: var(--space-lg);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(16px);
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
-}
-.diff-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--yellow-primary);
-}
-.diff-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  background: var(--yellow-primary);
-  display:flex; align-items:center; justify-content:center;
-  font-size: 1.5rem; color: var(--black);
-  margin-bottom: var(--space-sm);
-}
-
 /* ====== About (layout sencillo si faltan estilos) ====== */
 .about-section { padding: var(--space-2xl) 0; }
 .about-content {

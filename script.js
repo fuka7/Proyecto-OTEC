@@ -138,48 +138,6 @@ window.addEventListener('scroll', () => {
   });
 });
 
-// === CURSOR TRAIL EFFECT (Optional - Modern touch) ===
-let cursorTimeout;
-const cursor = document.createElement('div');
-cursor.className = 'cursor-trail';
-document.body.appendChild(cursor);
-
-document.addEventListener('mousemove', (e) => {
-  clearTimeout(cursorTimeout);
-  cursor.style.display = 'block';
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-  
-  cursorTimeout = setTimeout(() => {
-    cursor.style.display = 'none';
-  }, 1000);
-});
-
-// Add cursor trail styles
-const style = document.createElement('style');
-style.textContent = `
-  .cursor-trail {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background: #FFD700;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.6;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.3s;
-    display: none;
-  }
-  
-  @media (max-width: 768px) {
-    .cursor-trail {
-      display: none !important;
-    }
-  }
-`;
-document.head.appendChild(style);
-
 // === LAZY LOADING IMAGES ===
 if ('IntersectionObserver' in window) {
   const imageObserver = new IntersectionObserver((entries) => {

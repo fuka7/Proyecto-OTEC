@@ -293,42 +293,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (!track || cards.length === 0) return;
 
-      // Crear dots
-      cards.forEach((card, i) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = i === 0 ? 'active' : '';
-        btn.setAttribute('aria-label', `Ir al miembro ${i + 1}`);
-        btn.addEventListener('click', () => scrollToIndex(i));
-        dotsContainer?.appendChild(btn);
-      });
-
       let current = 0;
 
+      // Crear dots
+      if (dotsContainer) {
+        cards.forEach((card, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = i === 0 ? 'active' : '';
+          btn.setAttribute('aria-label', `Ir al miembro ${i + 1}`);
+          btn.addEventListener('click', () => scrollToIndex(i));
+          dotsContainer.appendChild(btn);
+        });
+      }
+
       function updateDots() {
-        const dots = dotsContainer?.children || [];
+        if (!dotsContainer) return;
+        const dots = dotsContainer.children || [];
         Array.from(dots).forEach((d, idx) => {
           d.classList.toggle('active', idx === current);
         });
       }
 
-      function scrollToIndex(i) {
-        const card = cards[i];
-        if (!card) return;
-        const left = card.offsetLeft - track.offsetLeft;
-        track.scrollTo({ left, behavior: 'smooth' });
-        current = i;
-        updateDots();
+      function updateButtons() {
+        if (prev) {
+          prev.disabled = current === 0;
+          prev.style.opacity = current === 0 ? '0.3' : '1';
+        }
+        if (next) {
+          next.disabled = current >= cards.length - 1;
+          next.style.opacity = current >= cards.length - 1 ? '0.3' : '1';
+        }
       }
 
+      function scrollToIndex(i) {
+        if (i < 0 || i >= cards.length) return;
+        const card = cards[i];
+        if (!card) return;
+        
+        // Calcular posición precisa
+        const left = card.offsetLeft - track.offsetLeft;
+        track.scrollTo({ left, behavior: 'smooth' });
+        
+        current = i;
+        updateDots();
+        updateButtons();
+      }
+
+      // Botones prev/next
       prev?.addEventListener('click', () => {
-        current = Math.max(0, current - 1);
-        scrollToIndex(current);
+        if (current > 0) {
+          scrollToIndex(current - 1);
+        }
       });
 
       next?.addEventListener('click', () => {
-        current = Math.min(cards.length - 1, current + 1);
-        scrollToIndex(current);
+        if (current < cards.length - 1) {
+          scrollToIndex(current + 1);
+        }
       });
 
       // Actualizar current basado en scroll position
@@ -346,26 +368,86 @@ document.addEventListener('DOMContentLoaded', function() {
               nearest = idx;
             }
           });
-          current = nearest;
-          updateDots();
-        }, 100);
+          if (nearest !== current) {
+            current = nearest;
+            updateDots();
+            updateButtons();
+          }
+        }, 150);
       });
 
-      // Autoplay opcional
+      // Touch/Drag support
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        track.style.cursor = 'grabbing';
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+
+      track.addEventListener('mouseleave', () => {
+        isDown = false;
+        track.style.cursor = 'grab';
+      });
+
+      track.addEventListener('mouseup', () => {
+        isDown = false;
+        track.style.cursor = 'grab';
+      });
+
+      track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 2;
+        track.scrollLeft = scrollLeft - walk;
+      });
+
+      // Keyboard navigation
+      carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && current > 0) {
+          e.preventDefault();
+          scrollToIndex(current - 1);
+        } else if (e.key === 'ArrowRight' && current < cards.length - 1) {
+          e.preventDefault();
+          scrollToIndex(current + 1);
+        }
+      });
+
+      // Autoplay opcional (desactivado por defecto)
       let autoplayTimer;
       function startAutoplay() {
+        stopAutoplay();
         autoplayTimer = setInterval(() => {
-          current = (current + 1) % cards.length;
-          scrollToIndex(current);
-        }, 4000);
+          if (current < cards.length - 1) {
+            scrollToIndex(current + 1);
+          } else {
+            scrollToIndex(0);
+          }
+        }, 5000);
       }
       function stopAutoplay() {
-        clearInterval(autoplayTimer);
+        if (autoplayTimer) {
+          clearInterval(autoplayTimer);
+          autoplayTimer = null;
+        }
       }
       
       carousel.addEventListener('mouseenter', stopAutoplay);
-      carousel.addEventListener('mouseleave', startAutoplay);
-      startAutoplay();
+      carousel.addEventListener('mouseleave', () => {
+        // Descomenta la siguiente línea si quieres autoplay
+        // startAutoplay();
+      });
+
+      // Inicializar
+      updateButtons();
+      track.style.cursor = 'grab';
+      
+      // Descomenta si quieres autoplay automático
+      // startAutoplay();
     });
   }
 

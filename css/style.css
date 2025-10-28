@@ -145,13 +145,15 @@
 
 /* === HERO === */
 .hero {
-  min-height: 100vh;
+  /* Reduce vertical footprint to avoid large gaps between sections */
+  min-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 120px 0 80px;
+  padding: 110px 0 40px;
   overflow: hidden;
+
 }
 
 .hero-bg {
@@ -230,7 +232,8 @@
   align-items: start;
   position: relative;
   z-index: 2;
-  margin-bottom: var(--space-lg);
+  /* Reduce bottom spacing so next section sits closer on large screens */
+  margin-bottom: var(--space-md);
 }
 
 .hero-content {

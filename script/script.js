@@ -302,7 +302,12 @@ document.addEventListener('DOMContentLoaded', function() {
           btn.type = 'button';
           btn.className = i === 0 ? 'active' : '';
           btn.setAttribute('aria-label', `Ir al miembro ${i + 1}`);
-          btn.addEventListener('click', () => scrollToIndex(i));
+          btn.addEventListener('click', () => {
+            scrollToIndex(i);
+            // Reiniciar autoplay tras interacción manual
+            stopAutoplay();
+            startAutoplay();
+          });
           dotsContainer.appendChild(btn);
         });
       }
@@ -340,16 +345,20 @@ document.addEventListener('DOMContentLoaded', function() {
         updateButtons();
       }
 
-      // Botones prev/next
+      // Botones prev/next (reinician autoplay tras interacción)
       prev?.addEventListener('click', () => {
         if (current > 0) {
           scrollToIndex(current - 1);
+          stopAutoplay();
+          startAutoplay();
         }
       });
 
       next?.addEventListener('click', () => {
         if (current < cards.length - 1) {
           scrollToIndex(current + 1);
+          stopAutoplay();
+          startAutoplay();
         }
       });
 
@@ -406,14 +415,18 @@ document.addEventListener('DOMContentLoaded', function() {
         track.scrollLeft = scrollLeft - walk;
       });
 
-      // Keyboard navigation
+      // Keyboard navigation (reinicia autoplay tras interacción)
       carousel.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' && current > 0) {
           e.preventDefault();
           scrollToIndex(current - 1);
+          stopAutoplay();
+          startAutoplay();
         } else if (e.key === 'ArrowRight' && current < cards.length - 1) {
           e.preventDefault();
           scrollToIndex(current + 1);
+          stopAutoplay();
+          startAutoplay();
         }
       });
 
@@ -436,18 +449,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
       
+      // Pausar autoplay al entrar y reanudar al salir
       carousel.addEventListener('mouseenter', stopAutoplay);
       carousel.addEventListener('mouseleave', () => {
-        // Descomenta la siguiente línea si quieres autoplay
-        // startAutoplay();
+        startAutoplay();
       });
 
       // Inicializar
       updateButtons();
       track.style.cursor = 'grab';
-      
-      // Descomenta si quieres autoplay automático
-      // startAutoplay();
+      // Asegurar que el carousel sea focusable para accesibilidad/teclado
+      carousel.tabIndex = 0;
+
+      // Iniciar autoplay por defecto
+      startAutoplay();
     });
   }
 

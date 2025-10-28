@@ -426,63 +426,109 @@
   justify-content: center;
 }
 
-/* === SCROLL INDICATOR === */
-.scroll-indicator {
-  position: relative;
-  text-align: center;
-  margin-top: var(--space-md);
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.scroll-indicator span {
-  display: block;
+/* === BOTÓN DESCUBRE MÁS === */
+.discover-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: var(--space-lg);
+  padding: 0.75rem 1.5rem;
+  color: var(--gray-700);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 0.5rem;
+  text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 1px;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  align-self: center;
 }
 
-.scroll-arrow {
-  width: 24px;
-  height: 40px;
-  border: 2px solid var(--gray-400);
-  border-radius: 12px;
-  margin: 0 auto;
-  position: relative;
-  animation: scrollPulse 2s infinite;
+.discover-btn:hover {
+  color: var(--yellow-primary);
+  transform: translateY(2px);
 }
 
-.scroll-arrow::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: var(--gray-400);
+.discover-btn i {
+  font-size: 1.125rem;
+  transition: transform var(--transition-base);
+}
+
+.discover-btn:hover i {
+  transform: translateY(3px);
+  animation: bounce 0.6s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* === HERO FEATURES BAR === */
+.hero-features {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  flex: 1;
+  transition: all var(--transition-base);
+}
+
+.feature-item:hover {
+  transform: translateY(-4px);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--yellow-primary);
   border-radius: 50%;
-  animation: scrollDown 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--black);
+  transition: all var(--transition-base);
 }
 
-@keyframes scrollPulse {
-  0%, 100% { 
-    opacity: 1;
-  }
-  50% { 
-    opacity: 0.6;
-  }
+.feature-item:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
 }
 
-@keyframes scrollDown {
-  0% { top: 8px; opacity: 0; }
-  30% { opacity: 1; }
-  60% { opacity: 1; }
-  100% { top: 24px; opacity: 0; }
+.feature-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.feature-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--gray-200);
 }
 
 /* === DIFERENCIADORES === */
@@ -1016,48 +1062,6 @@
   transform: translateX(5px);
 }
 
-/* Methodology Stats */
-.methodology-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
-  margin-top: var(--space-lg);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.stat-box {
-  background: var(--white);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-base);
-  border-top: 3px solid var(--yellow-primary);
-}
-
-.stat-box:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-.stat-value {
-  font-size: 1.75rem;
-  font-weight: 900;
-  color: var(--yellow-primary);
-  font-family: var(--font-display);
-  line-height: 1;
-  margin-bottom: 0.375rem;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--gray-700);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
 /* === EQUIPO === */
 .team-section {
@@ -1491,10 +1495,6 @@
     flex: 0 0 calc(33.333% - var(--space-md));
   }
   
-  .methodology-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   .timeline-step {
     grid-template-columns: 70px 1fr;
     gap: var(--space-sm);
@@ -1513,6 +1513,21 @@
   
   .timeline-line {
     left: 35px;
+  }
+  
+  /* Hero features en tablet */
+  .hero-features {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .feature-text {
+    font-size: 0.8rem;
+  }
+  
+  .feature-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
   }
 }
 
@@ -1591,10 +1606,6 @@
     margin-top: var(--space-sm);
   }
   
-  .scroll-indicator {
-    margin-top: var(--space-sm);
-  }
-  
   .hero-image-wrapper {
     max-width: 100%;
   }
@@ -1618,6 +1629,44 @@
   .hero-cta .btn-ghost {
     width: 100%;
     justify-content: center;
+  }
+  
+  /* Discover button responsive */
+  .discover-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--space-md);
+  }
+  
+  /* Hero features responsive */
+  .hero-features {
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+  
+  .feature-item {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: var(--space-sm);
+  }
+  
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .feature-text {
+    font-size: 0.8rem;
+    white-space: normal;
+    text-align: left;
+  }
+  
+  .feature-divider {
+    display: none;
   }
   
   /* Grids a una columna */
@@ -1684,27 +1733,6 @@
     font-size: 0.75rem;
     padding: 0.4rem 0.75rem;
     padding-left: 1.5rem;
-  }
-  
-  .methodology-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-xs);
-  }
-  
-  .stat-box {
-    padding: var(--space-sm);
-  }
-  
-  .stat-value {
-    font-size: 1.5rem;
-  }
-  
-  .stat-label {
-    font-size: 0.7rem;
-  }
-  
-  .stat-value {
-    font-size: 2rem;
   }
   
   .team-card {
